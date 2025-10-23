@@ -24,4 +24,4 @@ EXPOSE 3000
 
 
 # Start app
-CMD [ "node", "dist/server.js" ]
+CMD [ "node", "dist/src/server.js" ]
