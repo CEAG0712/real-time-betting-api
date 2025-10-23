@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 
-# Expose port (default 3000)
+# Expose port ""
 EXPOSE 8000
 
 
