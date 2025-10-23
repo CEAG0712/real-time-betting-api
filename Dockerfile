@@ -20,7 +20,7 @@ RUN npm run build
 
 
 # Expose port (default 3000)
-EXPOSE 3000
+EXPOSE 8000
 
 
 # Start app
