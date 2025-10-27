@@ -1,10 +1,15 @@
 import express from "express";
 import redis from "../lib/redis";
 import { BetInput, validateBet } from "../core/validateBet";
+import { log } from "console";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
+
+  console.log("🔥 Deployed with SHA: fa694f4");
+  
+
   const { userId, gameId, amount, odds } = req.body;
 
   if (!userId || !gameId || !amount || !odds) {
