@@ -29,11 +29,11 @@ router.post("/", async (req, res) => {
 
     return res.status(200).json({
       status: "accepted",
-      odds: result.odds, // 🔥 explicitly return locked odds
+      odds: result.odds, 
     });
   }
 
-return res.status(429).json(result); // could also use 400 or 403 depending on reason
+return res.status(429).json(result); 
 });
 
 export default router;
