@@ -1,14 +1,12 @@
 import express from "express";
 import redis from "../lib/redis";
-import { BetInput, validateBet } from "../core/validateBet";
-import { log } from "console";
+import { validateBet } from "../core/validateBet";
+import { persistBetWithRetry } from "../service/BetPersistenceService";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-
   console.log("🔥 Deployed with SHA: fa694f4");
-  
 
   const { userId, gameId, amount, odds } = req.body;
 
@@ -32,13 +30,22 @@ router.post("/", async (req, res) => {
     await redis.ltrim(key, 0, 4); // keep last 5
     await redis.expire(key, 60); // TTL 60s
 
+    await persistBetWithRetry({
+      userId,
+      gameId,
+      amount,
+      odds,
+      timestamp,
+      status: "accepted",
+    });
+
     return res.status(200).json({
       status: "accepted",
-      odds: result.odds, 
+      odds: result.odds,
     });
   }
 
-return res.status(429).json(result); 
+  return res.status(429).json(result);
 });
 
 export default router;
