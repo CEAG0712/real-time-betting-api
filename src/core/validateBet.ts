@@ -2,6 +2,7 @@ export interface BetInput {
   userId: string;
   gameId: string;
   amount: number;
+  odds: number;
   timestamp: number;
 }
 
@@ -22,8 +23,7 @@ export function validateBet(
     return { status: "rejected", reason: "Duplicate or too soon" };
   }
 
-  const odds = 1.5; // dummy static odds (usually dynamic)
-  return { status: "accepted", odds };
+  return { status: "accepted", odds: input.odds };
 
   
 }
