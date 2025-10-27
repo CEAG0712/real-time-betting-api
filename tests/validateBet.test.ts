@@ -6,7 +6,7 @@ describe("validateBet", () => {
       userId: "user1",
       gameId: "game1",
       amount: 100,
-      odds: 1.5,
+      odds: 2.5,
       timestamp: 10000,
     };
     const result = validateBet(input, []);
@@ -18,7 +18,7 @@ describe("validateBet", () => {
       userId: "user1",
       gameId: "game1",
       amount: 100,
-      odds: 1.5,
+      odds: 2.5,
       timestamp: 10500,
     };
     const recent = [10000];
