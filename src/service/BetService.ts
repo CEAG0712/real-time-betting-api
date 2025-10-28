@@ -16,7 +16,8 @@ export async function processBet(
 ): Promise<
   { status: "accepted"; odds: number } | { status: "rejected"; reason: string }
 > {
-
+  // ✅ Ensure timestamp always exists
+  const timestamp = input.timestamp ?? Date.now();
   const key = `bets:${input.userId}`;
 
   const recent = await redis.lrange(key, 0, -1);
@@ -26,7 +27,7 @@ export async function processBet(
 
   if (result.status === "accepted") {
     // Store timestamp in Redis for deduplication
-    await redis.lpush(key, input.timestamp.toString());
+    await redis.lpush(key, timestamp.toString());
     await redis.ltrim(key, 0, 4); // Keep only last 5
     await redis.expire(key, 60); // TTL 60s
 
