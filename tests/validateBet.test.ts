@@ -1,4 +1,5 @@
-import { validateBet, BetInput } from "../src/core/validateBet";
+import { validateBet } from "../src/core/validateBet";
+import { BetInput } from "../src/types/Bet";
 
 describe("validateBet", () => {
   it("accepts first bet", () => {

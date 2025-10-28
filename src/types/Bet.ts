@@ -10,3 +10,14 @@ export interface BetInput {
 export interface PersistedBet extends BetInput {
   status: "accepted" | "rejected" | "settled";
 }
+
+// Event published to Redis (or other pub/sub systems)
+export interface BetPlacedEvent {
+  correlationId: string; // Unique per request, enables tracing
+  userId: string;
+  gameId: string;
+  amount: number;
+  odds: number;
+  timestamp: number;
+  status: "accepted"; // Only "accepted" bets are published
+}
