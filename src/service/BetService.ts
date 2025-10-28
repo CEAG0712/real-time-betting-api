@@ -23,7 +23,7 @@ export async function processBet(
   const recent = await redis.lrange(key, 0, -1);
   const recentTimestamps = recent.map(Number);
 
-  const result = validateBet(input, recentTimestamps);
+  const result = validateBet({ ...input, timestamp }, recentTimestamps);
 
   if (result.status === "accepted") {
     // Store timestamp in Redis for deduplication
