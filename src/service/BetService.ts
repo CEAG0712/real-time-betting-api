@@ -2,7 +2,7 @@ import redis from "../lib/redis";
 import { validateBet } from "../core/validateBet";
 import { BetInput, PersistedBet } from "../types/Bet";
 import { persistBetWithRetry } from "./BetPersistenceService";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import { publishBetPlacedEvent } from "./EventBus";
 
 /**
@@ -16,6 +16,8 @@ export async function processBet(
 ): Promise<
   { status: "accepted"; odds: number } | { status: "rejected"; reason: string }
 > {
+  const { v4: uuidv4 } = await import("uuid");
+
   const key = `bets:${input.userId}`;
 
   const recent = await redis.lrange(key, 0, -1);
