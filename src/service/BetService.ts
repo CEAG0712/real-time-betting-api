@@ -16,7 +16,6 @@ export async function processBet(
 ): Promise<
   { status: "accepted"; odds: number } | { status: "rejected"; reason: string }
 > {
-  const { v4: uuidv4 } = await import("uuid");
 
   const key = `bets:${input.userId}`;
 
@@ -36,9 +35,14 @@ export async function processBet(
       status: "accepted",
     };
 
+    
+
     await persistBetWithRetry(betToPersist);
 
+    // ✅ Dynamically import uuid only after success path
+    const { v4: uuidv4 } = await import("uuid");
     const correlationId = uuidv4();
+
     await publishBetPlacedEvent({
       ...betToPersist,
       status: "accepted",
