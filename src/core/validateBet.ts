@@ -1,10 +1,4 @@
-export interface BetInput {
-  userId: string;
-  gameId: string;
-  amount: number;
-  odds: number;
-  timestamp: number;
-}
+import { BetInput } from "../types/Bet";
 
 export type BetDecision =
   | { status: "accepted"; odds: number }

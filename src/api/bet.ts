@@ -1,12 +1,13 @@
 import express from "express";
 import redis from "../lib/redis";
 import { validateBet } from "../core/validateBet";
+import { BetInput, PersistedBet } from "../types/Bet";
 import { persistBetWithRetry } from "../service/BetPersistenceService";
+
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  console.log("🔥 Deployed with SHA: fa694f4");
 
   const { userId, gameId, amount, odds } = req.body;
 
@@ -21,7 +22,7 @@ router.post("/", async (req, res) => {
   const recentTimestamps = recent.map(Number);
 
   const result = validateBet(
-    { userId, gameId, amount, odds, timestamp },
+    { userId, gameId, amount, odds, timestamp } as BetInput,
     recentTimestamps
   );
 
@@ -37,7 +38,7 @@ router.post("/", async (req, res) => {
       odds,
       timestamp,
       status: "accepted",
-    });
+    } as PersistedBet);
 
     return res.status(200).json({
       status: "accepted",

@@ -1,40 +1,38 @@
+import { PersistedBet } from "../types/Bet";
 import { getBetsCollection } from "../lib/mongo";
-import { MongoServerError } from "mongodb";
 
-export interface PersistedBet {
-  userId: string;
-  gameId: string;
-  amount: number;
-  odds: number;
-  timestamp: number;
-  status: "accepted";
+interface MongoErrorWithCode extends Error {
+  code?: number;
+}
+
+function isMongoDuplicateKeyError(err: unknown): err is MongoErrorWithCode {
+  return (
+    err instanceof Error &&
+    typeof (err as MongoErrorWithCode).code === "number" &&
+    (err as MongoErrorWithCode).code === 11000
+  );
 }
 
 export async function persistBetWithRetry(bet: PersistedBet): Promise<void> {
   const collection = await getBetsCollection();
-  const maxAttempts = 3;
-  const backoff = [500, 1000, 2000];
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       await collection.insertOne(bet);
+      console.log("Bet persisted:", bet);
       return;
     } catch (err: unknown) {
-      if (err instanceof MongoServerError && err.code === 11000) {
-        console.warn("Duplicate insert detected. Skipping.");
+      if (isMongoDuplicateKeyError(err)) {
+        console.warn("Duplicate insert prevented:", err.message);
         return;
       }
 
-      if (err instanceof Error) {
-        console.error(`Insert failed (attempt ${attempt + 1}):`, err.message);
-      } else {
-        console.error("Insert failed with unknown error:", err);
-      }
+      console.error(`Insert attempt ${attempt} failed:`, err);
 
-      if (attempt < maxAttempts - 1) {
-        await new Promise((resolve) => setTimeout(resolve, backoff[attempt]));
+      if (attempt < 3) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 100));
       } else {
-        throw new Error("Insert failed after 3 retries");
+        throw new Error("Failed to persist bet after 3 attempts");
       }
     }
   }
